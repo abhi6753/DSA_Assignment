@@ -1,0 +1,280 @@
+#include<iostream>
+#include<cstring>
+#include<cmath>
+using namespace std;
+struct Node{
+	Node *prev;
+	short value;
+	Node *next;
+};
+class Binary{
+	// private members
+	int count;
+	Node *head,*tail;
+    void clear()
+    { 
+   	    if(head==NULL)
+   	      return;
+   	    count =0;
+        Node *ptr = head;
+		while(ptr->next!=NULL)
+		{
+		    Node *temp =ptr;
+			ptr = ptr->next;
+			delete temp;	
+	    }
+	    delete tail;
+	    head = NULL;
+	    tail= NULL;
+    }
+	int decimal()
+	{
+		if(head==NULL)
+		{
+			cout<<"Binary number not found\n";
+			return 0;
+		}
+		Node *temp = tail;
+		int result =0,i=0;
+		while(temp!=head)
+		{
+			if(temp->value!=0)
+			  result+=pow(2,i);
+			  temp = temp->prev;
+			i++;
+		}
+		if(head->value==1) //for sign
+		  result = -result;
+		return result;
+	}
+public: // public members
+	Binary()
+  	{
+  	    head =tail= NULL;
+  	    count = 0;
+	}
+	void display()
+	{
+		if(head==NULL)
+		  cout<<"No any binary number found! Insert it first\n";
+		else
+		{
+			Node *ptr = head;
+			while(ptr!=NULL)
+			{
+				cout<<ptr->value;
+				ptr=ptr->next;
+			}
+		}
+		return;
+	}
+	bool insert(string binary)
+	{
+		if(head!=NULL)
+		  clear();
+		int i=0;
+		Node *temp;
+		while(binary[i]!='\0')
+		{
+			if(binary[i]!='0'&&binary[i]!='1')
+			{
+				cout<<"Invalid Bit value! It should be only '0' or '1'\n";
+				clear();
+				return false;
+			}
+			temp = new Node;
+			temp->next =temp->prev= NULL;
+	    	temp->value = binary[i++]-'0';
+			if(head==NULL)
+			{
+				head = temp;
+			}
+			else{
+				Node *ptr = head; 
+			while(ptr->next!=NULL)
+			{
+				ptr=ptr->next;
+			}
+			ptr->next= temp;
+			temp->prev=ptr;
+			}
+			tail = temp;
+			count++;
+		}
+		return true;
+	}
+    char* onesComplement()
+  	{   
+	    char *str=NULL;
+  	    str = new char[count+1];
+  	    int i=0;
+  		Node *ptr = head;
+  		while(ptr!=NULL)
+  		{
+  			str[i++]=(char)(ptr->value==1?0:1)+'0';
+  			ptr = ptr->next;	
+		}
+		return str;
+	}
+    char* twosComplement()
+   {
+      char *ones = onesComplement();
+      char *twos=NULL;
+      twos = new char[count+1];
+      int i=0;
+      while(ones[i]!='\0')
+      {
+    	twos[i]=ones[i];
+    	i++;
+	  } 
+	  twos[i]='\0';
+      int carry = 1;
+      if (decimal() == 0)
+      {
+        for (int j = 0; j < strlen(twos); j++)
+            twos[j]='0';
+      }
+      i=count-1;
+      while (i >= 0 && carry == 1)
+      {
+        if (twos[i] == '0')
+        {
+            twos[i] = '1';
+            carry = 0;
+        }
+        else
+        {
+            twos[i] = '0';
+        }
+        i--;
+      }
+      return twos;
+    }
+	char* add(Binary b2)
+	{
+		int size=count>b2.count?count: b2.count;
+		char *bin = NULL;
+		bin = new char[size+1];
+		int bin1 = decimal();
+		int bin2 = b2.decimal();
+		int result = bin1+bin2;
+		int i=size-1;
+		bin[size]='\0';
+		if(result ==0)
+		{
+			while(i<size) 
+				bin[i++]='0';	
+			return bin;
+		}
+		else
+		{
+			i=size-1;
+			// for sign bit
+			if(result<0)
+			 bin[0]='1';
+			else 
+			 bin[0] = '0';
+			 
+			int absNum = abs(result);
+			while (absNum > 0 || i>0) {
+              bin[i] = (char)(absNum % 2)+'0';
+              
+              if(absNum==0)
+                bin[i]='0';
+                absNum /= 2;
+               i--;
+            }
+		}
+	    return bin;
+	}
+	~Binary()
+	{
+		clear();
+	}
+};
+int main()
+{
+  int ch;
+  string binary,bin2;
+  Binary b1,b2;
+  char *ones,*twos,*result;
+	do{
+		cout<<"***************************************************************\n";
+		cout<<" 1. Insert Binary Number & Display it\n";
+		cout<<" 2. 1's complement\n";
+		cout<<" 3. 2's complement\n";
+		cout<<" 4. Addition of binary number\n";
+		cout<<" 5. Exit\n";
+		cout<<" NOTE: Binary number will store using Sign Magnitude\n";
+		cout<<" Representation MSB will represent Sign of that number.\n";
+		cout<<"***************************************************************\n\n";
+		cout<<"Enter choice: ";
+		cin>>ch;
+		switch(ch)
+		{
+			case 1:
+				cout<<"Enter Binary number: ";
+				cin>>binary;
+				if(binary.length()!=1)
+				{
+				   if(b1.insert(binary))
+				     cout<<"Binary number: ";b1.display();
+				   cout<<endl;
+				}	   
+				else
+				  cout<<"Atleast enter two bit\n";
+				break;
+			case 2:
+				cout<<"Enter Binary number: ";
+				cin>>binary;
+				if(binary.length()!=1)
+				{
+				   if(b1.insert(binary)){
+				     ones =b1.onesComplement();
+				     cout<<"1's Complement of "<<binary<<": "<<ones<<endl;
+				   }
+				}	   
+				else
+				  cout<<"Atleast enter two bit\n";
+				break;
+			case 3:
+				cout<<"Enter Binary number: ";
+				cin>>binary;
+				if(binary.length()!=1)
+				{
+				   if(b1.insert(binary)){
+				   	 twos =b1.twosComplement();
+				     cout<<"2's Complement of "<<binary<<": "<<twos<<endl;  
+				   }
+				}
+				else
+				  cout<<"Atleast enter two bit\n";
+				  break;
+			case 4: 
+			    cout<<"Enter first Binary number: ";
+			    cin>>binary;
+			    cout<<"Enter second Binary number: ";
+			    cin>>bin2;
+			    if(binary.length()!=1&&bin2.length()!=1)
+			    {
+			    	if(b1.insert(binary) && b2.insert(bin2)){
+			    	  result = b1.add(b2);
+			          cout<<binary<<" + "<<bin2<<" = "<<result;
+					}   
+				}
+			    else
+				  cout<<"Atleast enter two bit\n";
+			    break;
+			case 5:
+				cout<<"Exiting... Thank you!\n";
+				delete []ones; // release all the memory
+				delete []twos;
+				delete []result;
+				break;
+			default:
+				cout<<"Invalid choice! Try again...\n";
+		}
+		cout<<endl;
+	}while(ch!=5);
+	return 0;
+}
