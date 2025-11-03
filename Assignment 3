@@ -1,0 +1,315 @@
+#include<iostream>
+#include<string>
+using namespace std;
+struct Node{
+	int prn;
+	string name;
+	string ay;//Academic year
+	Node *next; // point to next node
+};
+// Linked List class
+class Club {
+
+    Node* head; // Head pointer
+public:
+    Club() { // constructor
+        head = NULL;
+    }
+    
+    Node* createNode()
+    {
+        Node *temp= new Node;
+        return temp;
+	}
+	addCordinator(int prn,string name,string ay)
+	{
+		Node *temp = createNode();
+		temp->prn  = prn;
+		temp->name = name;
+		temp->ay = ay;
+		temp->next = NULL;
+		if(head==NULL)
+		{
+			head = temp;
+			cout<<"Cordinator Added successfully\n";
+		}
+		else
+		{
+			cout<<"Cordinator already is there\n";
+		}
+	}
+	void removeCordinator() // we know cordintor is always at first node so don't need to pass its prn
+	{
+		if(head!=NULL)
+		{
+			Node *temp = head;
+			head = head->next;
+			delete temp;
+			cout<<"Cordinator deleted";
+			
+		}
+		else
+		{
+			cout<<"No cordinator exist"<<endl;
+		}
+	}
+	void addMember(int prn,string name,string ay)
+	{
+		if(head==NULL)
+		{
+			cout<<"Please add the Cordinator first before adding members."<<endl;
+			return;
+		}
+		Node *temp = createNode();
+		temp->prn  = prn;
+		temp->name = name;
+		temp->ay = ay;
+		temp->next = NULL;
+		Node *ptr = head;
+		while(ptr->next!=NULL)
+		{
+			ptr = ptr->next;
+		}
+		ptr->next = temp;
+		cout<<"Member added successfully\n";
+	}
+	void removeMember(int prn)
+	{
+		if(head ==NULL||head->next==NULL)
+		{
+			cout<<"Member not found\n";
+		}
+		else
+		{
+			int flag =0;
+			Node *ptr = head;
+			while(ptr!=NULL)
+			{
+				if(ptr->next->prn==prn)
+				{
+					flag = 1;
+					break;
+				}
+				ptr=ptr->next;
+			}
+			if(flag ==1)
+			{
+				Node *temp = ptr->next;
+				delete temp;	
+				ptr->next =ptr->next->next;
+				cout<<"Member deleted\n";
+			}
+			else
+			{
+				cout<<"Member not found\n";
+			}
+		}
+	}
+	void display()
+	{
+		if(head==NULL)
+		{
+			cout<<"List is empty\n";
+			return;
+		}
+		cout<<"Cordinator:\n";
+		cout<<"PRN: "<<head->prn<<endl;
+		cout<<"Name: "<<head->name<<endl;
+		cout<<"Annual year: "<<head->ay<<endl<<endl;
+		Node *ptr = head->next;
+		if(ptr!=NULL)
+		 cout<<"Member:\n";
+		while(ptr!=NULL)
+		{
+			
+			cout<<"PRN: "<<ptr->prn<<endl;
+		    cout<<"Name: "<<ptr->name<<endl;
+		    cout<<"Annual year: "<<ptr->ay<<endl<<endl;
+		    ptr=ptr->next;
+		}
+	}
+	int count()
+	{
+		int count =0;
+		if(head==NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			Node *ptr = head;
+			while(ptr!=NULL)
+			{
+				count++;
+				ptr= ptr->next;
+			}
+		}
+		return count;
+	}
+	void update(int prn)
+	{
+		Node *ptr = head;
+		while(ptr!=NULL && ptr->prn !=prn)
+		{
+		   ptr = ptr->next;
+		}
+		if(ptr!=NULL)
+		{
+			cin.ignore();
+			cout<<"Enter name: ";
+			getline(cin,ptr->name);
+			cout<<"Enter Annual year: ";
+			cin>>ptr->ay;
+			cout<<"Updated Successfully"<<endl<<endl;
+		}
+		else
+		{
+			cout<<"PRN not found"<<endl<<endl;
+		}
+	}
+	void concatenate(Club divB)
+	{
+		if(head==NULL)
+		{
+			cout<<"Atleast coordinator should be there in division A"<<endl;
+			return;
+		}
+		else if(divB.head==NULL)
+        	cout<<"Atleast one member should be present in division B"<<endl;
+        else
+		{
+        	Node *ptr = head;
+		    while(ptr->next!=NULL)
+		    {
+			 ptr = ptr->next;
+		    }
+		     ptr->next=this->head;
+		}	
+	}
+	~Club(){ // destructor release all the node 
+    	while(head!=NULL){
+    		Node next = head->next;
+    		delete head;
+    		head= next;
+		}
+	}
+	
+};
+int main()
+{
+	Club divA,divB;
+	int choice, prn;
+    string name, ay;
+    char div;
+	do{
+		cout << "\n====== Club Member Management ======\n";
+        cout << "1. Add Cordinator\n";
+        cout << "2. Add Member\n";
+        cout << "3. Delete Cordinator\n";
+        cout << "4. Delete Member\n";
+        cout << "5. Display Members\n";
+        cout << "6. Count Members\n";
+        cout << "7. Concatenate Two Divisions\n";
+        cout << "8. Update Member Info\n";
+        cout << "9. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        switch(choice)
+        {
+        	cin.ignore();
+        case 1: // Add cordinator
+            cout << "Enter PRN: ";
+            cin >> prn ;
+            cin.ignore();
+            cout<<"Name: ";
+			getline(cin,name);
+			cout<<"A.Y.: ";
+			cin>> ay;
+			cout<<"Division: ";
+            cin>>div;
+            if(div=='a'||div=='A')
+              divA.addCordinator(prn, name, ay);
+            else if(div=='b'||div=='B')
+              divA.addCordinator(prn, name, ay);
+            else
+              cout<<"Plz.. enter valid Division 'A' or 'B'"<<endl<<endl;
+            break;
+        case 2: // Add member
+            cout << "Enter PRN: ";
+            cin >> prn ;
+            cin.ignore();
+            cout<<"Name: ";
+			getline(cin,name);
+			cout<<"A.Y.: ";
+			cin>> ay;
+			cout<<"Division: ";
+            cin>>div;
+            if(div=='a'||div=='A')
+              divA.addMember(prn, name, ay);
+            else if(div=='b'||div=='B')
+              divB.addMember(prn, name, ay);
+            else
+              cout<<"Plz.. enter valid Division 'A' or 'B'"<<endl<<endl;
+            break;
+        case 3: // delete cordinator
+        	cout<<"Division: ";
+        	cin>>div;
+        	if(div=='a'||div=='A')
+              divA.removeCordinator();
+            else if(div=='b'||div=='B')
+              divB.removeCordinator();
+            else
+              cout<<"Plz.. enter valid Division 'A' or 'B'"<<endl<<endl;
+            break;
+        case 4:
+            cout << "Enter PRN & Division to delete: ";
+            cin >> prn;
+            cin.ignore();
+			cin>>div;
+            if(div=='a'||div=='A')
+             divA.removeMember(prn);
+            else if(div=='b'||div=='B')
+             divB.removeMember(prn);
+            else
+              cout<<"Plz.. enter valid Division 'A' or 'B'"<<endl<<endl;
+            break;
+        case 5:
+        	cout<<"Division A"<<endl;
+            divA.display();
+            cout<<"Division B"<<endl;
+            divB.display();
+            break;
+        case 6:
+            cout << "Total members in div A: " << divA.count()<<endl;
+			cout << "Total members in div B: " << divB.count()<<endl;
+			cout<<  "Sub Total members: "<<divA.count()+divB.count()<<endl;
+            break;
+        case 7:
+        	divA.concatenate(divB);
+        	break;
+        case 8:
+            cout << "Enter PRN & Division to update: ";
+            cin >> prn;
+            cin.ignore();
+			cin>>div;
+            if(div=='a'||div=='A')
+             divA.update(prn);
+            else if(div=='b'||div=='B')
+            {
+            	divB.update(prn);
+			}
+			else
+			{
+				cout<<"Plz.. enter valid Division 'A' or 'B'"<<endl<<endl;
+			}
+            break;
+        case 9:
+            cout << "Exiting...\n";
+            break;
+        default:
+            cout << "Invalid choice.\n";
+		}
+	}while(choice!=0);
+	
+   return 0;
+}
