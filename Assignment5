@@ -1,0 +1,100 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+#define MAX 100
+
+// Stack for characters (operators)
+class CharStack {
+    char arr[MAX];
+    int top;
+public:
+    CharStack() { top = -1; }
+    void push(char c) { arr[++top] = c; }
+    char pop() { return arr[top--]; }
+    char peek() { return arr[top]; }
+    bool isEmpty() { return top == -1; }
+};
+
+// Stack for integers (operands during evaluation)
+class IntStack {
+    int arr[MAX];
+    int top;
+public:
+    IntStack() { top = -1; }
+    void push(int val) { arr[++top] = val; }
+    int pop() { return arr[top--]; }
+    bool isEmpty() { return top == -1; }
+};
+
+// Function to define precedence of operators
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    return 0;
+}
+
+// Function to convert infix to postfix
+void infixToPostfix(char infix[], char postfix[]) {
+    CharStack s;
+    int j = 0;
+    for (int i = 0; infix[i] != '\0'; i++) {
+        char c = infix[i];
+        if (isalnum(c)) {  // operand
+            postfix[j++] = c;
+        } else if (c == '(') {
+            s.push(c);
+        } else if (c == ')') {
+            while (!s.isEmpty() && s.peek() != '(')
+                postfix[j++] = s.pop();
+            if (!s.isEmpty()) s.pop(); // pop '('
+        } else { // operator
+            while (!s.isEmpty() && precedence(s.peek()) >= precedence(c))
+                postfix[j++] = s.pop();
+            s.push(c);
+        }
+    }
+    while (!s.isEmpty())
+        postfix[j++] = s.pop();
+    postfix[j] = '\0';
+}
+
+// Function to evaluate postfix expression
+int evaluatePostfix(char postfix[]) {
+    IntStack s;
+    for (int i = 0; postfix[i] != '\0'; i++) {
+        char c = postfix[i];
+        if (isdigit(c)) {
+            s.push(c - '0'); // convert char to int
+        } else {
+            int val2 = s.pop();
+            int val1 = s.pop();
+            int res = 0;
+            switch (c) {
+                case '+': res = val1 + val2; break;
+                case '-': res = val1 - val2; break;
+                case '*': res = val1 * val2; break;
+                case '/': res = val1 / val2; break;
+            }
+            s.push(res);
+        }
+    }
+    return s.pop();
+}
+
+// Main Function
+int main() {
+    char infix[MAX], postfix[MAX];
+    cout << "Note: operands should be single-digit numbers only.\n";
+    cout << "Enter infix expression: ";
+    cin >> infix;
+
+    infixToPostfix(infix, postfix);
+
+    cout << "\nPostfix Expression: " << postfix << endl;
+
+    
+    cout << "Evaluated Result: " << evaluatePostfix(postfix) << endl;
+
+    return 0;
+}
