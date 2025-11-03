@@ -1,0 +1,98 @@
+#include<iostream>
+#include<cmath>
+using namespace std;
+int main()
+{
+	int ch,rows,count=0;
+	do{
+		cout<<"Choose Application"<<endl;
+    	cout<<"1. Social Networks(Friendship)"<<endl;
+	    cout<<"2. Map(City Roads)"<<endl;
+	    cout<<"Enter choice (1/2): ";
+	    cin>>ch;
+	    switch(ch){
+	    	case 1:
+	    		cout<<"\nEnter number of users: ";
+	    		break;
+	    	case 2:
+	    		cout<<"\nEnter number of city roads: ";
+	    		break;
+	    	default:
+	    		cout<<"Invalid choice! Try again...\n\n";
+		}
+	}while(ch!=1&&ch!=2);
+	cin>>rows;
+	if(rows<2 )//exception handling
+	{
+		do{
+			if(ch==1)
+		     cout<<"Atleast 2 users should be there\n";
+		   else
+		     cout<<"Atleast 2 road should be there\n";
+		   cin>>rows;
+		}while(rows<2);
+	}
+	char row_name = 'A';
+	char col_name ='B';
+	int matrix[rows][rows];
+	
+	for (int i = 0; i < rows; i++) {
+		col_name='B';
+        for (int j = 0; j < rows; j++) {
+        	if(ch==1)
+        	 cout<<row_name<<" is the friend of "<<col_name<<"? (0/1): ";
+        	else 
+        	 cout<<"is road "<<row_name<<" connected to "<<col_name<<"? (0/1): ";
+            cin >> matrix[i][j];
+            if(matrix[i][j]!=0)
+             count++;
+            col_name+=2;
+        }
+        row_name +=2;
+    }
+    //Display sparse matrix
+    cout<<"Sparse matrix:\n";
+    for(int i=0;i<rows;i++){
+    	cout<<"\t";
+    	for(int j=0;j<rows;j++){
+    		cout<<matrix[i][j]<<" ";
+		}
+        cout<<endl;
+	}
+	//store non-zero elemenet in triplet form
+    int triplet[count][3],k=0;
+    for(int i=0;i<rows;i++){
+    	for(int j=0;j<rows;j++){
+    		if(matrix[i][j]!=0){
+    			triplet[k][0]=i;
+    			triplet[k][1]=j;
+    			triplet[k][2]=matrix[i][j];
+    			k++;
+			}
+		}
+	}
+	cout << "\nTriplet Matrix (row col value):\n";
+	for(int i=0;i<count;i++)
+	 cout<<"\t"<<triplet[i][0]<<" "<<triplet[i][1]<<" "<<triplet[i][2]<<endl;
+	if(ch==1)
+	cout << "\nNumber of Connected people: " << count << endl;
+	else 
+	cout<<"\nNumber of Connected roads: "<<count<<endl;
+	// display connected friends
+    row_name ='A',col_name ='B';
+    for(int i=0;i<count;i++)
+   {
+	 if(triplet[i][0]==0) // for row
+	  cout<<"\t("<<char(row_name+pow(2,triplet[i][0])-1)<<",";
+	 else
+	  cout<<"\t("<<char(row_name+pow(2,triplet[i][0]))<<",";
+	
+	 if(triplet[i][1]==0) //for col
+	  cout<<char(col_name+pow(2,triplet[i][1])-1)<<")";
+	 else
+	  cout<<char(col_name+pow(2,triplet[i][1]))<<")";
+	  
+	 cout<<endl;
+    }
+	return 0;	 
+}
