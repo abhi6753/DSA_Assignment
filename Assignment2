@@ -1,0 +1,157 @@
+//Applications of polynomial
+#include<iostream>
+#include<cmath>
+using namespace std;
+void inputPolynomial(int poly[], int degree) {
+    cout << "Enter coefficients:\n";
+    for (int i = degree; i >= 0; i--) {
+        cin >> poly[i];
+    }
+}
+void displayPolynomial(int poly[], int degree) {
+    for (int i = degree; i >= 0; i--) {
+        if (poly[i] != 0) {
+            cout << poly[i];
+            if (i > 0) cout << "x^" << i;
+            if (i > 0) cout << " + ";
+        }
+    }
+    cout << endl;
+}
+void addPolynomials(int A[], int B[], int C[], int degA, int degB) {
+    int maxDeg = (degA > degB) ? degA : degB;
+    for (int i = 0; i <= maxDeg; i++) {
+    	if(i>degA)
+           C[i] = B[i];
+        else if(i>degB)
+           C[i] = A[i];
+        else
+           C[i] = A[i]+B[i];
+    }
+}
+void subPolynomials(int A[], int B[], int C[], int degA, int degB) {
+    int maxDeg = (degA > degB) ? degA : degB;
+    for (int i = 0; i <= maxDeg; i++) {
+    	if(i>degA)
+           C[i] = B[i];
+        else if(i>degB)
+           C[i] = A[i];
+        else
+           C[i] = A[i] - B[i];
+    }
+}
+void multiPolynomials(int A[], int B[], int C[], int degA, int degB) {
+    for(int i=0;i<=degA;i++)
+    {
+    	if(A[i]==0)
+    	 continue;
+    	for(int j=0;j<=degB;j++)
+    	{
+    	   C[i+j]+=A[i]*B[j];	
+		}
+	}
+}
+int evaluatePolynomial(int poly[],int deg1,int x) {
+	int i=0,result =0;
+	for( i=0;i<deg1;i++){
+		result+=poly[i]*pow(x,i);
+	}
+	return result;
+} 
+void enterPolynomial(int*& poly1, int*& poly2, int& deg1, int& deg2) {
+    cout << "Enter degree of first polynomial: ";
+    cin >> deg1;
+    poly1 = new int[deg1 + 1];   // +1 for coefficient of x^0
+
+    //cout << "First polynomial:\n\n";
+    inputPolynomial(poly1, deg1);
+
+    cout << "Enter degree of second polynomial: ";
+    cin >> deg2;
+    poly2 = new int[deg2 + 1];
+
+    //cout << "Second polynomial:\n\n";
+    inputPolynomial(poly2, deg2);
+}
+int main()
+{
+	int deg1=-1, deg2=-1;
+    int *poly1,*poly2;
+	  
+    int choice;
+    do{
+    	cout << "\n================ Polynomial Operations Menu ================\n";
+    	cout << "1. Enter Polynomials\n";
+        cout << "2. Display Polynomials\n";
+        cout << "3. Add Polynomials\n";
+        cout << "4. Subtract Polynomials\n";
+        cout << "5. Multiply Polynomials\n";
+        cout << "6. Evaluate Polynomial\n";
+        cout << "7. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        switch (choice) {
+        	
+        	case 1:
+        		enterPolynomial(poly1, poly2, deg1, deg2);
+        		break;
+        		
+            case 2:
+            	if(deg1==-1){
+            		cout<<"Error! Plz... Enter first polynomial";
+            		break;
+				}
+                cout << "\nFirst Polynomial: ";
+                displayPolynomial(poly1, deg1);
+                cout << "Second Polynomial: ";
+                displayPolynomial(poly2, deg2);
+                break;
+
+            case 3: {
+                int maxDeg = (deg1 > deg2) ? deg1 : deg2;
+                int sum[maxDeg + 1] = {0};
+                addPolynomials(poly1, poly2, sum, deg1, deg2);
+                cout << "\nSum of Polynomials: ";
+                displayPolynomial(sum, maxDeg);
+                break;
+            }
+
+            case 4: {
+                int maxDeg = (deg1 > deg2) ? deg1 : deg2;
+                int sub[maxDeg + 1] = {0};
+                subPolynomials(poly1, poly2, sub, deg1, deg2);
+                cout << "\nSubtraction of Polynomials: ";
+                displayPolynomial(sub, maxDeg);
+                break;
+            }
+
+            case 5: {
+                int multi[deg1 + deg2 + 1] = {0};
+                multiPolynomials(poly1, poly2, multi, deg1, deg2);
+                cout << "\nMultiplication of Polynomials: ";
+                displayPolynomial(multi, deg1 + deg2);
+                break;
+            }
+
+            case 6:
+            	int x;
+                cout << "\nEnter value of x for evaluation: ";
+                cin >> x;
+                cout << "Value of first polynomial at x = " << x << " is: "\
+				<< evaluatePolynomial(poly1, deg1, x) << endl;
+				cout << "Value of second polynomial at x = " << x << " is: "\
+				<< evaluatePolynomial(poly2, deg1, x) << endl;
+                break;
+
+            case 7:
+                cout << "\nExiting program... Thank you!\n";
+                break;
+
+            default:
+                cout << "\nInvalid choice! Please try again.\n";
+        }
+	}while(choice!=6);
+    delete[] poly1;
+    delete[] poly2;//release the memory 
+	return 0;
+}
